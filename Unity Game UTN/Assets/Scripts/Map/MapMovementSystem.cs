@@ -5,20 +5,22 @@ using UnityEngine;
 public class MapMovementSystem : MonoBehaviour
 {
 
-    public float speed;
+    public float speed = 0.3f;
 
     private Transform objectTransform;
+    private Rigidbody objectRigidbody;
     private Vector3 initialPos;
 
     void Start()
     {
         objectTransform = GetComponent<Transform>();
+        objectRigidbody = GetComponent<Rigidbody>();
         initialPos = objectTransform.position;
     }
 
     void Update()
     {
-        objectTransform.Translate(new Vector3(0f, 0f, -1f) * Time.deltaTime * speed);
+        objectRigidbody.MovePosition(objectTransform.position + new Vector3(0f, 0f, -1f) * speed);
     }
 
     void OnTriggerEnter(Collider other)
