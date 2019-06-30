@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class Player
 {
-    public string path = @"C:\Users\zapli\Documents\Unity Projects\Unity_Game\Unity Game UTN\Assets\Files\players.bin";
+    //public string path = @"C:\Users\zapli\Documents\Unity Projects\Unity_Game\Unity Game UTN\Assets\Files\players.bin";
+    public static string path = Application.persistentDataPath + @"\players.bin";
 
     public string playerName;
     public int playerScore;
@@ -19,43 +20,57 @@ public class Player
 
     public void savePlayer ()
     {
-        if (!File.Exists(path))
-        {
-            File.Create(path);
-        }
-
+        //checkFile();
+        
         // Abro el archivo en modo append
-        FileStream fs = File.Open(path, FileMode.Append);
-
-        if (fs.CanWrite)
+        if (File.Exists(path))
         {
-            byte[] buffer = Encoding.ASCII.GetBytes(this.playerName + "-" + this.playerScore + "|");
-            fs.Write(buffer, 0, buffer.Length);
-        }
+            FileStream fs = File.Open(path, FileMode.Append);
 
-        fs.Close();
+            if (fs.CanWrite)
+            {
+                byte[] buffer = Encoding.ASCII.GetBytes(this.playerName + "-" + this.playerScore + "|");
+                fs.Write(buffer, 0, buffer.Length);
+            }
+
+            fs.Close();
+        } else
+        {
+            FileStream fs = File.Open(path, FileMode.Create);
+
+            if (fs.CanWrite)
+            {
+                byte[] buffer = Encoding.ASCII.GetBytes(this.playerName + "-" + this.playerScore + "|");
+                fs.Write(buffer, 0, buffer.Length);
+            }
+
+            fs.Close();
+        }
     }
 
     public Player[] getAllPlayers ()
     {
+        //checkFile();
+
         string data;
         Player[] players = null;
-        FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-        if (fs.CanRead)
+        if (File.Exists(path))
         {
-            // Guardo los datos en un array de bytes igual de grande que el archivo
-            byte[] buffer = new byte[fs.Length];
-            int bytesRead = fs.Read(buffer, 0, buffer.Length);
+            FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-            data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-            players = formatPlayers(data);
+            if (fs.CanRead)
+            {
+                // Guardo los datos en un array de bytes igual de grande que el archivo
+                byte[] buffer = new byte[fs.Length];
+                int bytesRead = fs.Read(buffer, 0, buffer.Length);
+
+                data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                players = formatPlayers(data);
+            }
+
+            fs.Close();
         }
-
-        fs.Close();
-
-        
-        
 
         return players;
     }
@@ -74,4 +89,12 @@ public class Player
 
         return players;
     }
+
+    //public void checkFile ()
+    //{
+    //    if (!File.Exists(path))
+    //    {
+    //        File.Create(path);
+    //    }
+    //}
 }

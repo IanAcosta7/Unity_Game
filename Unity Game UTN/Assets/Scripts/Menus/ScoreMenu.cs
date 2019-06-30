@@ -45,8 +45,14 @@ public class ScoreMenu : MonoBehaviour
         mainMenuUI.SetActive(false);
         Player player = new Player("dummy", 0);
         Player[] players =  player.getAllPlayers();
-        players = sortPlayersByScore(players);
-        showScoreList(players);
+        if (players != null)
+        {
+            players = sortPlayersByScore(players);
+            showScoreList(players);
+        } else
+        {
+            Application.Quit();
+        }
     }
 
     public Player[] sortPlayersByScore (Player[] players)
@@ -68,7 +74,7 @@ public class ScoreMenu : MonoBehaviour
 
         foreach (Player playerData in players)
         {
-            scorePrefab.GetComponent<Text>().text = i + "\t\t" + playerData.playerName + "\t" + playerData.playerScore;
+            scorePrefab.GetComponent<Text>().text = i + "\t" + playerData.playerName + "\t\t" + playerData.playerScore;
             GameObject scoreText = Instantiate(scorePrefab, scorePos, Quaternion.identity, scoreListContent);
             scorePos = new Vector3(scorePos.x, scorePos.y - 50, scorePos.z);
             i++;

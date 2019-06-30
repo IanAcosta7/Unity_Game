@@ -13,6 +13,8 @@ public class ObstacleRandomizer : MonoBehaviour
     public float middleWallProb; //Probabilities
     public Transform doubleWall;
     public float doubleWallProb; //Probabilities
+    public Transform bigWall;
+    public float bigWallProb; //Probabilities
 
 
     // Privates
@@ -50,6 +52,9 @@ public class ObstacleRandomizer : MonoBehaviour
         {
             Instantiate(doubleWall, new Vector3(doubleWall.position.x, doubleWall.position.y, doubleWall.position.z), Quaternion.identity, objectTransform);
             Instantiate(doubleWall, new Vector3(-doubleWall.position.x, doubleWall.position.y, doubleWall.position.z), Quaternion.identity, objectTransform);
+        } else if (value > max && value <= (max += bigWallProb))
+        {
+            Instantiate(bigWall, randomSide(bigWall.position), Quaternion.identity, objectTransform);
         }
 
         nextSpawnTime = Time.time + spawnRate;
@@ -68,7 +73,7 @@ public class ObstacleRandomizer : MonoBehaviour
         int random = (int)Mathf.Round(Random.Range(0f, 1f));
 
         if (random == 0)
-            position = new Vector3(wall.position.x * -1, wall.position.y, wall.position.z);
+            position = new Vector3(position.x * -1, wall.position.y, wall.position.z);
 
         return position;
     }
@@ -78,7 +83,7 @@ public class ObstacleRandomizer : MonoBehaviour
     // Verifica que el porcentaje de las probabiliddades no supere el 100 %
     private void verifyProbs()
     {
-        float value = wallProb + middleWallProb + doubleWallProb;
+        float value = wallProb + middleWallProb + doubleWallProb + bigWallProb;
 
         if (value > 100)
         {
