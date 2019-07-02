@@ -6,6 +6,7 @@ TagManager:
   tags:
   - border
   - Obstacle
+  - ScoreText
   layers:
   - Default
   - TransparentFX

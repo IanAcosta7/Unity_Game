@@ -12,14 +12,14 @@ public class MainMenu : MonoBehaviour
     public Transform mainCamera;
     public Button scoreBoardBtn;
     public GameObject scoreUI;
-
-    private bool play;
+    
+    public bool play;
 
     void Start()
     {
         Time.timeScale = 0f;
 
-        if (!File.Exists(Player.path))
+        if (!File.Exists(PlayerFile.path))
         {
             scoreBoardBtn.interactable = false;
         }

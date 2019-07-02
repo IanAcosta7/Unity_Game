@@ -8,10 +8,13 @@ public class PauseMenu : MonoBehaviour
     public static bool GameIsPaused = false;
 
     public GameObject pauseMenuUI;
+    public GameObject mainMenuUI;
+    public GameObject scoreMenuUI;
+    public GameObject scoreListUI;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !mainMenuUI.activeSelf && !scoreMenuUI.activeSelf && !scoreListUI.activeSelf)
         {
             if (GameIsPaused)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -14,10 +15,17 @@ public class ScoreMenu : MonoBehaviour
     public Text scoreText;
     public Transform scoreListContent;
     public GameObject scorePrefab;
+    public Button continueBtn;
+    public Scrollbar scrollbar;
 
-    //private Player player;
+    private PlayerFile playerFile;
     private string playerName;
     private int score;
+
+    public void Start()
+    {
+        playerFile = new PlayerFile();
+    }
 
     public void OpenMenu ()
     {
@@ -29,25 +37,29 @@ public class ScoreMenu : MonoBehaviour
 
     public void GetData(string name)
     {
-        playerName = name;
+        if (name == "" || name.Contains('|') || name.Contains('-'))
+            continueBtn.interactable = false;
+        else
+            continueBtn.interactable = true;
+
+
+        playerName = name.ToUpper();
     }
 
     public void nextMenu ()
     {
         scoreMenuUI.SetActive(false);
         Player player = new Player(playerName, score);
-        player.savePlayer();
+        playerFile.savePlayer(player);
         ShowScoreBoard();
     }
 
     public void ShowScoreBoard ()
     {
         mainMenuUI.SetActive(false);
-        Player player = new Player("dummy", 0);
-        Player[] players =  player.getAllPlayers();
+        Player[] players =  playerFile.getAllPlayers();
         if (players != null)
         {
-            players = sortPlayersByScore(players);
             showScoreList(players);
         } else
         {
@@ -67,6 +79,20 @@ public class ScoreMenu : MonoBehaviour
 
     public void showScoreList (Player[] players)
     {
+        // Llevo la scrollbar a su posicion original
+        scrollbar.value = 1f;
+
+        // Borro la lista si ya existe
+        GameObject[] elements = GameObject.FindGameObjectsWithTag("ScoreText");
+        foreach (GameObject element in elements)
+        {
+            Destroy(element);
+        }
+
+        // Ordeno la lista por puntuacion
+        players = sortPlayersByScore(players);
+
+        // Y muestro los datos recibidos
         Vector3 scorePos = scorePrefab.transform.position;
         int i = 1;
 
@@ -84,5 +110,14 @@ public class ScoreMenu : MonoBehaviour
     public void closeMenu ()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void onSearch (string search)
+    {
+        Player[] players = playerFile.getAllPlayers();
+
+        // Filtro por nombre 
+        players = players.Where(player => player.playerName.Contains(search.ToUpper())).ToArray();
+        showScoreList(players);
     }
 }
